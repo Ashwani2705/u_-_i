@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Be My Valentine?</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-pink: #ff4b72;
+            --bg-color: #fdf0f3;
+            --text-color: #333;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: var(--bg-color);
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden; /* Prevents scrollbars when button runs away */
+            position: relative;
+        }
+
+        /* --- Floating Hearts Background --- */
+        .heart-bg {
+            position: absolute;
+            font-size: 1.5rem;
+            color: rgba(255, 182, 193, 0.6);
+            user-select: none;
+            z-index: 0;
+            animation: floatUp 4s linear infinite;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            20% { opacity: 1; }
+            100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+        }
+
+        /* --- Container for all views --- */
+        .container {
+            z-index: 10;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* --- View 1: Envelope --- */
+        #envelope-view {
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        #envelope-view:hover {
+            transform: scale(1.05);
+        }
+        .envelope {
+            width: 300px;
+            height: 200px;
+            background-color: var(--primary-pink);
+            position: relative;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        /* CSS trick to draw the envelope flap */
+        .envelope::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            border-top: 100px solid #ff7594; /* Lighter pink for the flap */
+            z-index: 2;
+        }
+        .envelope-text {
+            margin-top: 20px;
+            font-weight: 600;
+            color: var(--primary-pink);
+        }
+
+        /* --- View 2 & 3: Card Layout --- */
+        .card {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            max-width: 450px;
+            text-align: center;
+            border: 2px solid #ffe1e8;
+        }
+        
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            color: var(--primary-pink);
+            font-size: 2.8rem;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--text-color);
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            color: var(--primary-pink);
+            font-size: 1.4rem;
+            margin-bottom: 30px;
+        }
+
+        /* --- Buttons --- */
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            position: relative;
+            height: 50px; /* Gives the NO button room to exist before it moves */
+        }
+
+        button {
+            padding: 12px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        #btn-yes {
+            background-color: var(--primary-pink);
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 75, 114, 0.4);
+        }
+        #btn-yes:hover {
+            background-color: #e63e61;
+            transform: scale(1.05);
+        }
+
+        #btn-no {
+            background-color: white;
+            color: var(--text-color);
+            border: 2px solid #ddd;
+            /* Transition makes it glide smoothly when running away */
+            transition: left 0.3s ease, top 0.3s ease; 
+        }
+
+        /* --- Success View GIF --- */
+        #success-gif {
+            width: 200px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        /* Utility Class */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="background-container"></div>
+
+    <div class="container">
+        <div id="envelope-view">
+            <div class="envelope"></div>
+            <div class="envelope-text">Click to open 💌</div>
+        </div>
+
+        <div id="proposal-view" class="card hidden">
+            <h1>To the love of my life...</h1>
+            <p>
+                You are the 'commit' I'll never revert.<br>
+                My life's best logic started the day I met you.<br>
+                You're my favorite person to merge with. ❤️
+            </p>
+            <h3>Will you be my Valentine?</h3>
+            <div class="btn-container">
+                <button id="btn-yes">YES</button>
+                <button id="btn-no">No</button>
+            </div>
+        </div>
+
+        <div id="success-view" class="card hidden">
+            <img id="success-gif" src="https://media.tenor.com/gUiu1zyxfzYAAAAi/bear-kiss-bear-kisses.gif" alt="Cute Bears Kissing">
+            <h1>I Love You!</h1>
+            <p>Merge Request Accepted Forever.</p>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const envelopeView = document.getElementById('envelope-view');
+        const proposalView = document.getElementById('proposal-view');
+        const successView = document.getElementById('success-view');
+        
+        const btnYes = document.getElementById('btn-yes');
+        const btnNo = document.getElementById('btn-no');
+
+        // Logic 1: Click Envelope to open Proposal
+        envelopeView.addEventListener('click', () => {
+            envelopeView.classList.add('hidden');
+            proposalView.classList.remove('hidden');
+        });
+
+        // Logic 2: Click YES to show Success
+        btnYes.addEventListener('click', () => {
+            proposalView.classList.add('hidden');
+            successView.classList.remove('hidden');
+        });
+
+        // Logic 3: Make the NO button run away
+        btnNo.addEventListener('mouseover', () => {
+            // Change position to absolute so it can move anywhere on screen
+            btnNo.style.position = 'absolute';
+            
+            // Calculate random X and Y coordinates within window bounds
+            // Subtracting button dimensions ensures it doesn't go off screen
+            const x = Math.random() * (window.innerWidth - btnNo.offsetWidth - 20);
+            const y = Math.random() * (window.innerHeight - btnNo.offsetHeight - 20);
+            
+            // Apply new coordinates
+            btnNo.style.left = `${x}px`;
+            btnNo.style.top = `${y}px`;
+        });
+
+        // Optional: Also move on touch for mobile users
+        btnNo.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // Prevent accidental clicking
+            const x = Math.random() * (window.innerWidth - btnNo.offsetWidth - 20);
+            const y = Math.random() * (window.innerHeight - btnNo.offsetHeight - 20);
+            btnNo.style.position = 'absolute';
+            btnNo.style.left = `${x}px`;
+            btnNo.style.top = `${y}px`;
+        });
+
+        // Background Animation Generator (Floating Hearts)
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart-bg');
+            heart.innerHTML = '❤️'; // Or use 🌸
+            
+            // Randomize starting position and size
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = Math.random() * 3 + 3 + 's'; // 3s to 6s
+            
+            document.getElementById('background-container').appendChild(heart);
+            
+            // Remove heart after animation completes to prevent DOM bloat
+            setTimeout(() => {
+                heart.remove();
+            }, 6000);
+        }
+
+        // Create a new heart every 300ms
+        setInterval(createHeart, 300);
+    </script>
+</body>
+</html>
